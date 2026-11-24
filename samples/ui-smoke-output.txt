@@ -1,0 +1,14 @@
+dashboard on http://127.0.0.1:41397/
+  ✔ KPI cards + genuine complete-set table
+  ✔ sort + search filter
+  ✔ trap toggle + expandable "why a naive bot loses"
+  ✔ stake slider re-prices on depth + fee curve
+    build result: [03:49:18] leg 1 ✕ Jupiter did not build: unsupported_region Trading is not available in your region
+  ✔ build unsigned orders (dry-run) reaches Jupiter POST /orders; geo errors surfaced
+  ✔ Wallet Standard discovery + connect (mock wallet, public key only)
+  ✔ trap basket hard-blocked in LIVE mode (sign button disabled, wallet never asked)
+  ✔ trap in dry-run: inspect → payload preview only, never signable
+  ✔ venue parity audit tab
+  ✔ static demo renders embedded scan with no server
+ui smoke: ok; screenshots in docs/dashboard-*.png
+chrome + server stopped

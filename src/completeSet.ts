@@ -20,8 +20,11 @@ import type { OrderRequest, CompleteSetCandidate, JupEvent, JupMarket, JupOrderb
 
 const isOpen = (m: JupMarket) => m.status === 'open';
 
+export const basketId = (kind: string, legs: { marketId: string; side: string }[]) => `${kind}:${legs.map((l) => `${l.marketId}.${l.side}`).join('+')}`;
+
 function candidate(ev: JupEvent, kind: CompleteSetCandidate['kind'], legs: SetLeg[], payout: number): CompleteSetCandidate {
   return {
+    id: basketId(kind, legs),
     kind,
     eventId: ev.eventId,
     eventTitle: ev.title,
@@ -161,21 +164,25 @@ export function legAsks(c: CompleteSetCandidate, books: Map<string, JupOrderbook
 export const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
 /**
- * Turn a sized basket into `POST /prediction/v1/orders` bodies (one per leg). The deposit for each leg covers
- * its volume-weighted cost plus its fee, rounded up to the micro-USDC. This tool never signs or submits them.
+ * `POST /prediction/v1/orders` bodies, one per leg. Per Jupiter's API reference, buys are sized by
+ * `depositAmount` (native USDC units); the contract-quantity fields are for sells only. The deposit covers the
+ * leg's volume-weighted cost plus its fee, rounded up to the micro-USDC. Nothing here signs or submits.
  */
+export function orderBodies(legs: { marketId: string; side: 'yes' | 'no' }[], depositsUsd: number[], ownerPubkey = '<YOUR_WALLET_PUBKEY>'): OrderRequest[] {
+  return legs.map((l, i) => ({
+    ownerPubkey,
+    marketId: l.marketId,
+    isYes: l.side === 'yes',
+    isBuy: true,
+    depositAmount: String(Math.ceil(depositsUsd[i]! * 1e6 - 1e-6)),
+    depositMint: USDC_MINT,
+  }));
+}
+
 export function orderPlan(c: CompleteSetCandidate, sized: SizedOpportunity, ownerPubkey = '<YOUR_WALLET_PUBKEY>'): OrderRequest[] {
-  return c.legs.map((l, i) => {
+  const deposits = c.legs.map((_, i) => {
     const avg = sized.avgLegPrices[i]!;
-    const deposit = avg * sized.contracts + tradingFee(sized.contracts, avg);
-    return {
-      ownerPubkey,
-      marketId: l.marketId,
-      isYes: l.side === 'yes',
-      isBuy: true,
-      contracts: sized.contracts.toFixed(2),
-      depositAmount: String(Math.ceil(deposit * 1e6)),
-      depositMint: USDC_MINT,
-    };
+    return avg * sized.contracts + tradingFee(sized.contracts, avg);
   });
+  return orderBodies(c.legs, deposits, ownerPubkey);
 }

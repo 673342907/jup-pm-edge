@@ -59,6 +59,8 @@ export interface SetLeg {
 }
 
 export interface CompleteSetCandidate {
+  /** Stable id: kind + legs. Used by the dashboard and the server to refer to a basket. */
+  id: string;
   kind: SetKind;
   eventId: string;
   eventTitle: string;
@@ -99,6 +101,8 @@ export interface VerifiedSet {
   verdict: 'ARB' | 'NO-EDGE-AFTER-FEES' | 'NO-DEPTH' | 'NOT-A-COMPLETE-SET' | 'UNVERIFIED';
   /** Ready-to-POST bodies for Jupiter `POST /prediction/v1/orders` (ARB only). Never signed or sent by this tool. */
   orders?: OrderRequest[];
+  /** Ask ladders per leg captured at scan time (truncated), so the static demo can price stakes offline. */
+  asks?: Level[][];
 }
 
 export interface OrderRequest {
@@ -106,8 +110,7 @@ export interface OrderRequest {
   marketId: string;
   isYes: boolean;
   isBuy: true;
-  contracts: string;
-  /** USDC native units (6 decimals), covering the leg's cost plus its fee. */
+  /** USDC native units (6 decimals), covering the leg's cost plus its fee. Buys are sized by deposit, not contracts. */
   depositAmount: string;
   depositMint: string;
 }

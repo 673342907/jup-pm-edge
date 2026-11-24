@@ -7,10 +7,12 @@
  *                      [--budget 1000] [--integrity-sample 40] [--out DIR] [--json]
  *   pm-edge integrity  [--max-events N] [--sample 40] [--out DIR]
  *   pm-edge render     <scan.json> --out DIR                               (re-render reports from a saved scan)
+ *   pm-edge serve      [--data samples/scan.json] [--port 8787] [--host 127.0.0.1]  (dashboard + wallet-signed execution UI)
+ *   pm-edge build-demo [--data samples/scan.json] [--out samples/demo.html] [--site site]  (static, self-contained demo)
  *   pm-edge watch      [--interval 120] [--min-profit 1] ...scan flags      (prints only new ARB rows)
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { runIntegrity, sampleMarkets, summarise } from './integrity.ts';
 import { JupiterPrediction } from './jupiter.ts';
@@ -33,6 +35,10 @@ const { positionals, values } = parseArgs({
     interval: { type: 'string', default: '120' },
     'min-profit': { type: 'string', default: '1' },
     help: { type: 'boolean', short: 'h', default: false },
+    data: { type: 'string', default: 'samples/scan.json' },
+    port: { type: 'string', default: '8787' },
+    host: { type: 'string', default: '127.0.0.1' },
+    site: { type: 'string', default: 'site' },
   },
 });
 
@@ -78,6 +84,41 @@ async function main() {
     if (values.json) console.log(JSON.stringify(report, null, 2));
     else console.log(toConsole(report));
     if (values.out) write(values.out, report, report);
+  } else if (cmd === 'serve') {
+    const { createDashboardServer } = await import('./server.ts');
+    const report = existsSync(values.data!) ? (JSON.parse(readFileSync(values.data!, 'utf8')) as Report) : null;
+    const server = createDashboardServer({
+      report,
+      runScan: async ({ maxEvents, integritySample }) => {
+        const res = await scan({ maxEvents, budgetUsd: 1000 });
+        const { events, ...result } = res;
+        const r: Report = { scan: result };
+        if (integritySample > 0) {
+          const rows = await runIntegrity(sampleMarkets(events, integritySample));
+          r.integrity = { rows, summary: summarise(rows) };
+        }
+        return r;
+      },
+    });
+    server.listen(num('port'), values.host, () => {
+      const a = server.address() as { port: number };
+      console.log(`pm-edge dashboard on http://${values.host}:${a.port}  (data: ${report ? values.data : 'none, use Run live scan'})`);
+      console.log('no keys are held; wallets sign in the browser. Ctrl+C to stop.');
+    });
+    const stop = () => server.close(() => process.exit(0));
+    process.on('SIGINT', stop);
+    process.on('SIGTERM', stop);
+    return;
+  } else if (cmd === 'build-demo') {
+    const { buildDemoHtml } = await import('./demo.ts');
+    const report = JSON.parse(readFileSync(values.data!, 'utf8')) as Report;
+    const html = buildDemoHtml(report);
+    const out = values.out ?? 'samples/demo.html';
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, html);
+    mkdirSync(values.site!, { recursive: true });
+    writeFileSync(join(values.site!, 'index.html'), html);
+    console.error(`wrote ${out} and ${values.site}/index.html (${(html.length / 1024).toFixed(0)} KB, self-contained)`);
   } else if (cmd === 'render') {
     const file = positionals[1];
     if (!file || !values.out) throw new Error('usage: pm-edge render <scan.json> --out DIR');

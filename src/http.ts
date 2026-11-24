@@ -4,15 +4,24 @@ export interface HttpOptions {
   timeoutMs?: number;
   retries?: number;
   headers?: Record<string, string>;
+  method?: 'GET' | 'POST';
+  body?: unknown;
 }
 
 export class HttpError extends Error {
   readonly status: number;
   readonly url: string;
+  /** Parsed JSON error body when available (e.g. Jupiter's `{type, message, code}`). */
+  readonly body: any;
   constructor(status: number, url: string, body: string) {
     super(`HTTP ${status} for ${url}: ${body.slice(0, 200)}`);
     this.status = status;
     this.url = url;
+    try {
+      this.body = JSON.parse(body);
+    } catch {
+      this.body = body;
+    }
   }
 }
 
@@ -21,17 +30,21 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export type Fetcher = (url: string, opts?: HttpOptions) => Promise<unknown>;
 
 export const fetchJson: Fetcher = async (url, opts = {}) => {
-  const { timeoutMs = 15_000, retries = 3, headers = {} } = opts;
+  const { timeoutMs = 15_000, headers = {}, method = 'GET', body } = opts;
+  // Never blindly retry a POST: it may not be idempotent.
+  const retries = opts.retries ?? (method === 'GET' ? 3 : 0);
   let lastErr: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { accept: 'application/json', 'user-agent': 'jup-pm-edge/0.1', ...headers },
+        method,
+        headers: { accept: 'application/json', 'user-agent': 'jup-pm-edge/0.2', ...(body !== undefined ? { 'content-type': 'application/json' } : {}), ...headers },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (res.ok) return await res.json();
-      const body = await res.text();
-      const err = new HttpError(res.status, url, body);
+      const text = await res.text();
+      const err = new HttpError(res.status, url, text);
       // Only retry throttling and server errors; 4xx is a caller problem.
       if (res.status !== 429 && res.status < 500) throw err;
       lastErr = err;

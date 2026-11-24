@@ -101,6 +101,16 @@ export class JupiterPrediction {
     return parseJupOrderbook(await this.get(`/orderbook/${encodeURIComponent(marketId)}`));
   }
 
+  /** POST /orders: Jupiter builds an UNSIGNED transaction for `ownerPubkey`. Nothing is signed here. */
+  buildOrder(body: object): Promise<any> {
+    return this.fetcher(`${JUP_BASE}/orders`, { method: 'POST', body, headers: this.headers, timeoutMs: 20_000 });
+  }
+
+  /** POST /execute: relay a transaction the user's wallet already signed, with the build's `execution.context`. */
+  execute(signedTransaction: string, context: unknown): Promise<any> {
+    return this.fetcher(`${JUP_BASE}/execute`, { method: 'POST', body: { signedTransaction, context }, headers: this.headers, timeoutMs: 30_000 });
+  }
+
   async tradingActive(): Promise<boolean> {
     const r = (await this.get('/trading-status')) as any;
     return Boolean(r?.trading_active);

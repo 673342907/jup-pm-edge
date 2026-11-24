@@ -1,62 +1,74 @@
 
-> jup-pm-edge@0.1.0 test
-> node --test test/*.test.ts
+> jup-pm-edge@0.2.0 test
+> node --disable-warning=ExperimentalWarning --test test/*.test.ts
 
-✔ builds condition-pair baskets for Polymarket games Jupiter splits per team (1.674357ms)
-✔ builds YES and NO baskets for a 5-outcome event (Fed decision) (0.407866ms)
-✔ micro-USD prices are converted and 0 means "no quote" (0.470578ms)
-✔ sizing finds a genuine arbitrage and nets fees (0.62062ms)
-✔ fees can erase a thin quoted edge (0.277803ms)
-✔ respects Jupiter's $5 minimum per leg and the budget cap (0.284616ms)
-✔ returns null when a leg has no asks (0.130746ms)
-✔ TRAP: AFC Asian Cup group winner (negRiskAugmented placeholders) is not a YES complete set (1.95289ms)
-✔ Fed decision (negRisk, no placeholders, all 5 listed) is a verified YES complete set (0.706706ms)
-✔ dropping one outcome from a YES basket is rejected (Jupiter missing an outcome) (0.368976ms)
-✔ NO baskets only need mutual exclusivity, so augmented events still qualify (1.937788ms)
-✔ Kalshi: non-exclusive events are rejected; Kalshi never claims exhaustiveness (2.269027ms)
-✔ structural baskets need no network call (0.339726ms)
-✔ source lookup failures degrade to UNVERIFIED, never ARB (0.371206ms)
-✔ fee model reproduces all 18 values in Jupiter's published fee table (0.801872ms)
-✔ documented worked example: 100 contracts at $0.25 costs $1.32 in fees (0.112545ms)
-✔ fee is symmetric around $0.50, zero for zero size, and never negative (0.168381ms)
-✔ retries 5xx / 429 then succeeds (1467.248068ms)
-✔ does not retry 4xx (6.694239ms)
-✔ mapLimit preserves order and caps concurrency (24.735027ms)
-✔ maps a Jupiter per-team market to the right Polymarket CLOB token (0.651368ms)
-✔ compare() reports cents; positive means Jupiter is dearer (0.172888ms)
-✔ Kalshi quote derives YES ask from the best NO bid (real orderbook fixture) (0.821898ms)
-✔ runIntegrity samples top-volume markets per provider and isolates per-market failures (1.165234ms)
-﹣ live: Jupiter Prediction API is reachable and trading-status responds (1.462097ms) # SKIP
-﹣ live: a 300-event scan completes and every ARB is structurally verified (0.244391ms) # SKIP
-✔ parses a real Jupiter orderbook (Polymarket-sourced market) (1.041598ms)
-✔ falls back to integer-cent ladders when dollar ladders are absent (0.626571ms)
-✔ NO bids become YES asks at 1 - p, cheapest first (0.236385ms)
-✔ costToBuy walks the ladder and returns null when depth runs out (0.137339ms)
-✔ scan finds the planted arbitrage, sizes it on depth, and rejects the AFC trap (19.317314ms)
-✔ diverseTraps round-robins across rejection reasons (0.375963ms)
-ℹ tests 32
+✔ builds condition-pair baskets for Polymarket games Jupiter splits per team (1.864241ms)
+✔ builds YES and NO baskets for a 5-outcome event (Fed decision) (0.45116ms)
+✔ micro-USD prices are converted and 0 means "no quote" (0.484113ms)
+✔ sizing finds a genuine arbitrage and nets fees (0.510904ms)
+✔ fees can erase a thin quoted edge (0.287595ms)
+✔ respects Jupiter's $5 minimum per leg and the budget cap (0.294209ms)
+✔ returns null when a leg has no asks (0.12655ms)
+✔ demo embeds data safely (no script breakout) and inlines every module via an import map (9.015118ms)
+✔ scriptSafeJson round-trips and escapes HTML-significant characters (0.288255ms)
+✔ slimReport keeps what the UI renders and drops trap books (0.147747ms)
+✔ wrangler.toml ships the static demo only (no Worker code that would hit Jupiter from a geo-blocked edge) (0.30258ms)
+✔ TRAP: AFC Asian Cup group winner (negRiskAugmented placeholders) is not a YES complete set (2.322351ms)
+✔ Fed decision (negRisk, no placeholders, all 5 listed) is a verified YES complete set (1.101777ms)
+✔ dropping one outcome from a YES basket is rejected (Jupiter missing an outcome) (0.481676ms)
+✔ NO baskets only need mutual exclusivity, so augmented events still qualify (0.302284ms)
+✔ Kalshi: non-exclusive events are rejected; Kalshi never claims exhaustiveness (3.381561ms)
+✔ structural baskets need no network call (0.360271ms)
+✔ source lookup failures degrade to UNVERIFIED, never ARB (0.356043ms)
+✔ fee model reproduces all 18 values in Jupiter's published fee table (0.827977ms)
+✔ documented worked example: 100 contracts at $0.25 costs $1.32 in fees (0.11449ms)
+✔ fee is symmetric around $0.50, zero for zero size, and never negative (0.150332ms)
+✔ retries 5xx / 429 then succeeds (1620.83052ms)
+✔ does not retry 4xx (8.367939ms)
+✔ mapLimit preserves order and caps concurrency (24.675566ms)
+✔ maps a Jupiter per-team market to the right Polymarket CLOB token (0.854913ms)
+✔ compare() reports cents; positive means Jupiter is dearer (0.261099ms)
+✔ Kalshi quote derives YES ask from the best NO bid (real orderbook fixture) (0.776872ms)
+✔ runIntegrity samples top-volume markets per provider and isolates per-market failures (1.357069ms)
+﹣ live: Jupiter Prediction API is reachable and trading-status responds (0.552695ms) # SKIP
+﹣ live: a 300-event scan completes and every ARB is structurally verified (0.197031ms) # SKIP
+✔ parses a real Jupiter orderbook (Polymarket-sourced market) (1.175806ms)
+✔ falls back to integer-cent ladders when dollar ladders are absent (0.671524ms)
+✔ NO bids become YES asks at 1 - p, cheapest first (0.302613ms)
+✔ costToBuy walks the ladder and returns null when depth runs out (1.691789ms)
+✔ quoteStake: total spend (cost + Jupiter fees) never exceeds the stake (2.825944ms)
+✔ quoteStake: bigger stakes walk deeper and pay slippage; net turns negative past the edge (0.355783ms)
+✔ quoteStake: flags depth-limited sizes and sub-$5 legs (0.793677ms)
+✔ quoteStake: null on empty book or non-positive stake; APR from close time (0.175802ms)
+✔ quoteStake on a real Jupiter book (Polymarket-routed) produces a sane fill (0.592016ms)
+✔ base58 round-trips and validates 32-byte public keys (1.842577ms)
+✔ genuine ARB: dry-run can build (not sign); live can sign (2.026406ms)
+✔ TRAP baskets are hard-blocked in live mode, even with every acknowledgement (0.287876ms)
+✔ TRAP in dry-run: blocked until explicitly inspected, then payload PREVIEW only (0.346826ms)
+✔ a rejected exclusivity status blocks even if the verdict string looks harmless (0.149489ms)
+✔ UNVERIFIED: never signable; dry-run preview only (0.189281ms)
+✔ blocks: invalid wallet, no depth, sub-$5 leg, over-cap stake, cost above stake (0.288992ms)
+✔ negative edge: warning in dry-run, blocking in live until acknowledged (0.183178ms)
+✔ inspectTransaction decodes v0 headers; checkUnsignedTx enforces the fee payer (0.672598ms)
+✔ scan finds the planted arbitrage, sizes it on depth, and rejects the AFC trap (22.635549ms)
+✔ diverseTraps round-robins across rejection reasons (0.389495ms)
+✔ serves the dashboard with security headers, and the stripped browser modules (38.496076ms)
+✔ no path traversal or arbitrary file serving (3.956906ms)
+✔ GET /api/scan/latest returns the loaded report; unknown API routes 404 (2.757707ms)
+✔ GET /api/basket/:id/quote prices a stake on live books (3.908519ms)
+✔ POST /api/orders/build: genuine ARB → real unsigned txs from Jupiter, fee payer checked (6.934124ms)
+✔ POST /api/orders/build: TRAP is hard-blocked in live mode, and Jupiter is never called (2.59734ms)
+✔ POST /api/orders/build: TRAP in dry-run needs acknowledgement and only ever returns a payload preview (3.644023ms)
+✔ POST /api/orders/build: the server ignores client claims about a basket (verdict comes from its own scan) (1.709844ms)
+✔ POST /api/orders/build: invalid wallet and geo-blocked Jupiter responses are surfaced, not hidden (3.50836ms)
+✔ POST /api/simulate proxies simulateTransaction with sigVerify off (2.841363ms)
+✔ POST /api/orders/execute relays an already-signed tx with its context; validates input (4.036778ms)
+✔ POST /api/scan runs in the background, rejects concurrent scans, then swaps in the new report (160.444864ms)
+ℹ tests 62
 ℹ suites 0
-ℹ pass 30
+ℹ pass 60
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 2
 ℹ todo 0
-ℹ duration_ms 1664.899459
-
---- live ---
-
-> jup-pm-edge@0.1.0 test:live
-> PM_EDGE_LIVE=1 node --test test/live.test.ts
-
-✔ live: Jupiter Prediction API is reachable and trading-status responds (116.120586ms)
-✔ live: a 300-event scan completes and every ARB is structurally verified (16289.863268ms)
-ℹ tests 2
-ℹ suites 0
-ℹ pass 2
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 16512.580186
---- typecheck ---
-tsc: 0 errors
+ℹ duration_ms 1833.358616

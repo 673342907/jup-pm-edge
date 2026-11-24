@@ -38,10 +38,10 @@ export function toMarkdown({ scan, integrity }: Report): string {
   L.push('', `## Traps rejected (${s.traps ?? 0} of ${s.sourceChecked ?? 0} source-checked baskets)`, '');
   L.push(`These look like free money on Jupiter quotes but are **not** complete sets according to the source venue. ${s.naiveFalsePositives ?? 0} of them have quotes summing to less than their payout, i.e. a naive "sum of prices < payout" scanner would flag them as arbitrage. By reason: ${Object.entries(s.trapReasons ?? {}).map(([k, v]) => `${k} ${v}`).join(', ')}.`, '');
   L.push(`| kind | event | quoted cost | payout | why rejected |`, `|---|---|---:|---:|---|`);
-  for (const v of scan.traps) L.push(`| ${v.candidate.kind} | ${v.candidate.eventTitle.replace(/\|/g, '/')} (${v.candidate.eventId}) | ${usd(v.candidate.quotedCost, 3)} | ${usd(v.candidate.payout, 0)} | ${v.exclusivity.note.replace(/\|/g, '/')} |`);
+  for (const v of scan.traps.slice(0, 15)) L.push(`| ${v.candidate.kind} | ${v.candidate.eventTitle.replace(/\|/g, '/')} (${v.candidate.eventId}) | ${usd(v.candidate.quotedCost, 3)} | ${usd(v.candidate.payout, 0)} | ${v.exclusivity.note.replace(/\|/g, '/')} |`);
   if (scan.unverified.length) {
     L.push('', `Unverified (${s.unverified ?? 0}, never counted as ARB):`, '');
-    for (const v of scan.unverified) L.push(`- ${v.candidate.kind} ${v.candidate.eventTitle} (${v.candidate.eventId}) quoted ${usd(v.candidate.quotedCost, 3)} — ${v.exclusivity.note}`);
+    for (const v of scan.unverified.slice(0, 10)) L.push(`- ${v.candidate.kind} ${v.candidate.eventTitle} (${v.candidate.eventId}) quoted ${usd(v.candidate.quotedCost, 3)} — ${v.exclusivity.note}`);
   }
   if (integrity) {
     L.push('', `## Price integrity — Jupiter vs native venue`, '');
@@ -85,7 +85,7 @@ table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border-bottom:1px s
 <table><tr><th>verdict</th><th>kind</th><th>event / legs</th><th>quoted</th><th>book</th><th>payout</th><th>size</th><th>fees</th><th>net</th><th>ROI</th><th>APR</th></tr>${rows}</table>
 <h2>Traps rejected: ${s.traps ?? 0} baskets that look like arbitrage but are not complete sets</h2>
 <p class="id">Checked against Polymarket negRisk / negRiskAugmented and Kalshi mutually_exclusive. A naive "sum of prices &lt; $1" scanner would buy these.</p>
-<table><tr><th>kind</th><th>event</th><th>reason</th><th>quoted</th><th>payout</th></tr>${scan.traps.map((v) => `<tr class="NOT-A-COMPLETE-SET"><td><span class="tag">${v.candidate.kind}</span></td><td><div class="ev">${esc(v.candidate.eventTitle)}</div><div class="id">${esc(v.candidate.eventId)} · ${v.candidate.legs.length} legs</div></td><td style="text-align:left" class="id">${esc(v.exclusivity.note)}</td><td>${usd(v.candidate.quotedCost, 3)}</td><td>${usd(v.candidate.payout, 0)}</td></tr>`).join('')}</table>
+<table><tr><th>kind</th><th>event</th><th>reason</th><th>quoted</th><th>payout</th></tr>${scan.traps.slice(0, 15).map((v) => `<tr class="NOT-A-COMPLETE-SET"><td><span class="tag">${v.candidate.kind}</span></td><td><div class="ev">${esc(v.candidate.eventTitle)}</div><div class="id">${esc(v.candidate.eventId)} · ${v.candidate.legs.length} legs</div></td><td style="text-align:left" class="id">${esc(v.exclusivity.note)}</td><td>${usd(v.candidate.quotedCost, 3)}</td><td>${usd(v.candidate.payout, 0)}</td></tr>`).join('')}</table>
 ${integ}
 <p class="id">Fees: ceil_to_cent(0.07 · contracts · p · (1−p)) per leg, which reproduces Jupiter's published fee table exactly. APR assumes capital is locked until the market's close time. Not financial advice.</p></body></html>`;
 }
@@ -102,7 +102,7 @@ export function toConsole({ scan, integrity }: Report): string {
     out.push(`  [${v.verdict.padEnd(18)}] ${k.kind.padEnd(17)} quoted ${k.quotedCost.toFixed(3)} book ${v.bookCost?.toFixed(3) ?? '  —  '} / ${k.payout}  net ${usd(v.sized?.netProfit)} on ${v.sized?.contracts.toFixed(0) ?? '—'} sets  ${k.eventTitle.slice(0, 50)}${k.kind === 'binary-yes-no' ? ' · ' + k.legs[0]!.title.slice(0, 25) : ''}`);
   }
   out.push(`  traps: ${s.naiveFalsePositives} would be false "free money" for a naive sum-of-prices scanner · ${Object.entries(s.trapReasons ?? {}).map(([k, v]) => `${k}=${v}`).join(' ')}`);
-  for (const v of scan.traps.slice(0, 5)) out.push(`  [TRAP] ${v.candidate.kind.padEnd(17)} quoted ${v.candidate.quotedCost.toFixed(3)} / ${v.candidate.payout}  ${v.candidate.eventTitle.slice(0, 50)} — ${v.exclusivity.note.slice(-90)}`);
+  for (const v of scan.traps.slice(0, 5)) out.push(`  [TRAP] ${v.candidate.kind.padEnd(17)} quoted ${v.candidate.quotedCost.toFixed(3)} / ${v.candidate.payout}  ${v.candidate.eventTitle.slice(0, 50)} — ${v.exclusivity.note.length > 100 ? "…" + v.exclusivity.note.slice(-99) : v.exclusivity.note}`);
   if (integrity) {
     out.push('  price integrity (Jupiter minus venue, cents):');
     for (const r of integrity.summary) out.push(`    ${r.provider.padEnd(10)} n=${r.n} median buy ${c(r.medianBuyDiffCents)} · median sell ${c(r.medianSellDiffCents)} · within ±1¢ ${r.withinOneCentPct}%`);

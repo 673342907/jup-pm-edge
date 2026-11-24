@@ -36,7 +36,7 @@ export interface ScanResult {
   generatedAt: string;
   stats: ScanStats;
   verified: VerifiedSet[];
-  /** Baskets that look like free money on quotes but are not complete sets (top examples). */
+  /** Every basket that looks like free money on quotes but is not a complete set; the first 15 are diverse examples. */
   traps: VerifiedSet[];
   unverified: VerifiedSet[];
   tightest: CompleteSetCandidate[];
@@ -113,6 +113,12 @@ export function diverseTraps(traps: VerifiedSet[], n: number): VerifiedSet[] {
   return out;
 }
 
+/** All traps, with 15 diverse examples first (reports show the head). */
+const orderTraps = (traps: VerifiedSet[]) => {
+  const head = diverseTraps(traps, 15);
+  return [...head, ...traps.filter((t) => !head.includes(t))];
+};
+
 export async function scan(
   opts: ScanOptions & { maxEvents?: number; provider?: string } = {},
   jup = new JupiterPrediction(),
@@ -156,12 +162,13 @@ export async function scan(
 
   const verified = shortlist.map(({ c, exclusivity }): VerifiedSet => {
     const asks = legAsks(c, books);
+    const snap = asks.map((a) => a.slice(0, 40));
     const bests = asks.map((a) => bestAsk(a));
     const bookCost = bests.some((b) => b == null) ? null : round6(bests.reduce<number>((s, b) => s + (b ?? 0), 0));
-    if (bookCost == null) return { candidate: c, exclusivity, bookCost, sized: null, verdict: 'NO-DEPTH' };
+    if (bookCost == null) return { candidate: c, exclusivity, bookCost, sized: null, verdict: 'NO-DEPTH', asks: snap };
     const sized = sizeCompleteSet(asks, c.payout, c.closeTime, opts);
-    if (sized && sized.netProfit > 0) return { candidate: c, exclusivity, bookCost, sized, verdict: 'ARB', orders: orderPlan(c, sized) };
-    return { candidate: c, exclusivity, bookCost, sized, verdict: 'NO-EDGE-AFTER-FEES' };
+    if (sized && sized.netProfit > 0) return { candidate: c, exclusivity, bookCost, sized, verdict: 'ARB', orders: orderPlan(c, sized), asks: snap };
+    return { candidate: c, exclusivity, bookCost, sized, verdict: 'NO-EDGE-AFTER-FEES', asks: snap };
   });
   verified.sort((a, b) => (b.sized?.netProfit ?? -Infinity) - (a.sized?.netProfit ?? -Infinity) || (a.bookCost ?? 9) / a.candidate.payout - (b.bookCost ?? 9) / b.candidate.payout);
 
@@ -174,8 +181,8 @@ export async function scan(
       naiveFalsePositives: traps.filter((t) => t.candidate.quotedCost < t.candidate.payout).length,
       trapReasons: traps.reduce<Record<string, number>>((acc, t) => ((acc[trapReason(t)] = (acc[trapReason(t)] ?? 0) + 1), acc), {}), unverified: unverified.length, bookChecked: shortlist.length },
     verified,
-    traps: diverseTraps(traps, 15),
-    unverified: unverified.slice(0, 10),
+    traps: orderTraps(traps),
+    unverified,
     tightest: ranked.slice(0, 15),
     events,
   };

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pm-edge · Jupiter Prediction complete-set desk</title>
+<link rel="stylesheet" href="./app.css">
+<!--PM_EDGE_INLINE_HEAD-->
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">◆</span> pm-edge <span class="sub">complete-set desk for Jupiter Prediction Markets on Solana</span></div>
+  <div class="top-right">
+    <span id="mode-badge" class="badge"></span>
+    <div id="wallet-area"></div>
+  </div>
+</header>
+<main>
+  <section id="banner" class="banner" hidden></section>
+  <section id="kpis" class="kpis"></section>
+  <nav class="tabs" id="tabs">
+    <button data-tab="sets" class="active">Complete sets</button>
+    <button data-tab="parity">Venue parity audit</button>
+    <button data-tab="about">How it stays safe</button>
+    <span class="spacer"></span>
+    <span id="scan-meta" class="muted"></span>
+    <button id="run-scan" class="btn">Run live scan</button>
+  </nav>
+  <section id="view"></section>
+</main>
+<aside id="drawer" class="drawer" hidden></aside>
+<div id="scrim" class="scrim" hidden></div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

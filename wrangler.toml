@@ -1,0 +1,12 @@
+# Static hosting for the self-contained demo (site/index.html, built by `npm run build-demo`).
+# Deploy with: npx wrangler deploy     (Cloudflare Workers static assets; no Worker script)
+#
+# Deliberately NO server-side code: Jupiter's Prediction API geo-blocks US and South Korea IPs, and a Worker
+# runs in whichever edge location serves the request. The demo calls Jupiter (order books, unsigned order
+# builds) from the VIEWER's browser instead, so availability follows the viewer's own region.
+name = "pm-edge-demo"
+compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./site"
+not_found_handling = "single-page-application"
