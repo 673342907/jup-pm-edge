@@ -1,0 +1,62 @@
+
+> jup-pm-edge@0.1.0 test
+> node --test test/*.test.ts
+
+✔ builds condition-pair baskets for Polymarket games Jupiter splits per team (1.674357ms)
+✔ builds YES and NO baskets for a 5-outcome event (Fed decision) (0.407866ms)
+✔ micro-USD prices are converted and 0 means "no quote" (0.470578ms)
+✔ sizing finds a genuine arbitrage and nets fees (0.62062ms)
+✔ fees can erase a thin quoted edge (0.277803ms)
+✔ respects Jupiter's $5 minimum per leg and the budget cap (0.284616ms)
+✔ returns null when a leg has no asks (0.130746ms)
+✔ TRAP: AFC Asian Cup group winner (negRiskAugmented placeholders) is not a YES complete set (1.95289ms)
+✔ Fed decision (negRisk, no placeholders, all 5 listed) is a verified YES complete set (0.706706ms)
+✔ dropping one outcome from a YES basket is rejected (Jupiter missing an outcome) (0.368976ms)
+✔ NO baskets only need mutual exclusivity, so augmented events still qualify (1.937788ms)
+✔ Kalshi: non-exclusive events are rejected; Kalshi never claims exhaustiveness (2.269027ms)
+✔ structural baskets need no network call (0.339726ms)
+✔ source lookup failures degrade to UNVERIFIED, never ARB (0.371206ms)
+✔ fee model reproduces all 18 values in Jupiter's published fee table (0.801872ms)
+✔ documented worked example: 100 contracts at $0.25 costs $1.32 in fees (0.112545ms)
+✔ fee is symmetric around $0.50, zero for zero size, and never negative (0.168381ms)
+✔ retries 5xx / 429 then succeeds (1467.248068ms)
+✔ does not retry 4xx (6.694239ms)
+✔ mapLimit preserves order and caps concurrency (24.735027ms)
+✔ maps a Jupiter per-team market to the right Polymarket CLOB token (0.651368ms)
+✔ compare() reports cents; positive means Jupiter is dearer (0.172888ms)
+✔ Kalshi quote derives YES ask from the best NO bid (real orderbook fixture) (0.821898ms)
+✔ runIntegrity samples top-volume markets per provider and isolates per-market failures (1.165234ms)
+﹣ live: Jupiter Prediction API is reachable and trading-status responds (1.462097ms) # SKIP
+﹣ live: a 300-event scan completes and every ARB is structurally verified (0.244391ms) # SKIP
+✔ parses a real Jupiter orderbook (Polymarket-sourced market) (1.041598ms)
+✔ falls back to integer-cent ladders when dollar ladders are absent (0.626571ms)
+✔ NO bids become YES asks at 1 - p, cheapest first (0.236385ms)
+✔ costToBuy walks the ladder and returns null when depth runs out (0.137339ms)
+✔ scan finds the planted arbitrage, sizes it on depth, and rejects the AFC trap (19.317314ms)
+✔ diverseTraps round-robins across rejection reasons (0.375963ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 1664.899459
+
+--- live ---
+
+> jup-pm-edge@0.1.0 test:live
+> PM_EDGE_LIVE=1 node --test test/live.test.ts
+
+✔ live: Jupiter Prediction API is reachable and trading-status responds (116.120586ms)
+✔ live: a 300-event scan completes and every ARB is structurally verified (16289.863268ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16512.580186
+--- typecheck ---
+tsc: 0 errors

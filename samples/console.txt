@@ -1,0 +1,31 @@
+scan finished in 149.8s
+pm-edge scan @ 2026-11-24T01:51:40.856Z (2026-11-24 09:51 (UTC+8))
+  3039 events · 31035/35024 open markets · binary-yes-no=28078 multi-outcome-yes=2320 multi-outcome-no=2073 condition-pair=78
+  median quoted overround: binary-yes-no 2.3% · multi-outcome-yes 16.4% · multi-outcome-no 0.98% · condition-pair 1%
+  11775 baskets within screen · 11775 structure-checked → 937 traps rejected, 2 unverified · 120 genuine sets checked on live books → 0 ARB
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 4.003 book 4.002 / 4  net $-0.43 on 11 sets  Fed decisions (Oct-Jan)
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 3.993 book 3.993 / 4  net $-0.44 on 13 sets  Spain General Election: BNG # of seats?
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 6.995 book 6.995 / 7  net $-0.45 on 11 sets  World Happiness Report 2027: 2nd place
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 6.000 book 6.000 / 6  net $-0.45 on 9 sets  Elon Musk Net Worth on November 30?
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 4.993 book 4.993 / 5  net $-0.47 on 17 sets  How many more Millennium Prize Problems will AI so
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 5.997 book 6.002 / 6  net $-0.48 on 9 sets  Nvidia’s Market Cap end of 2026?
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 15.013 book 15.013 / 15  net $-0.56 on 7 sets  NHL: 2027 Eastern Conference Champion
+  [NO-EDGE-AFTER-FEES] binary-yes-no     quoted 1.001 book 1.001 / 1  net $-0.58 on 23 sets  Democratic Presidential Nominee 2028 · Jon Ossoff
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 19.992 book 19.992 / 20  net $-0.59 on 17 sets  Second-best AI Lab end of January?
+  [NO-EDGE-AFTER-FEES] binary-yes-no     quoted 1.001 book 1.001 / 1  net $-0.61 on 28 sets  Democratic Presidential Nominee 2028 · Alexandria Ocasio-Cortez
+  [NO-EDGE-AFTER-FEES] multi-outcome-yes quoted 0.976 book 0.976 / 1  net $-0.65 on 109 sets  Pete Buttigieg 2028 election exact outcome?
+  [NO-EDGE-AFTER-FEES] multi-outcome-no  quoted 5.004 book 5.004 / 5  net $-0.66 on 16 sets  US rank in World Happiness Report 2027
+  traps: 869 would be false "free money" for a naive sum-of-prices scanner · not-exclusive=816 non-exhaustive=121
+  [TRAP] multi-outcome-yes quoted 0.022 / 1  Heidi Overton confirmed as FDA Commissioner by...? — RiskAugmented=false, 2 active + 0 placeholder markets: outcomes are not mutually exclusive
+  [TRAP] multi-outcome-yes quoted 0.075 / 1  Abbotsford-Mission By-Election Winner — ; NOT exhaustive (placeholder / "Other" outcomes can win), YES basket can expire worthless
+  [TRAP] multi-outcome-yes quoted 0.030 / 1  Yemeni forces enter Sanaa by...? — RiskAugmented=false, 2 active + 0 placeholder markets: outcomes are not mutually exclusive
+  [TRAP] multi-outcome-yes quoted 0.138 / 1  AFC Asian Cup 2027: Group D Winner — ; NOT exhaustive (placeholder / "Other" outcomes can win), YES basket can expire worthless
+  [TRAP] multi-outcome-yes quoted 0.034 / 1  Pro Football: Eagles 2026 Win Total — RiskAugmented=false, 2 active + 0 placeholder markets: outcomes are not mutually exclusive
+  price integrity (Jupiter minus venue, cents):
+    polymarket n=40 median buy 0.00¢ · median sell 0.00¢ · within ±1¢ 100%
+    kalshi     n=40 median buy 0.00¢ · median sell 0.00¢ · within ±1¢ 100%
+wrote samples/report.md, report.html, scan.json
+
+real	2m29.987s
+user	0m9.797s
+sys	0m3.870s

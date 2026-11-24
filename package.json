@@ -1,0 +1,21 @@
+{
+  "name": "jup-pm-edge",
+  "version": "0.1.0",
+  "description": "Complete-set arbitrage and price-integrity scanner for Jupiter Prediction Markets on Solana (Polymarket + Kalshi liquidity).",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "pm-edge": "./src/cli.ts" },
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "scan": "node src/cli.ts scan",
+    "integrity": "node src/cli.ts integrity",
+    "demo": "node src/cli.ts scan --max-events 1500 --integrity-sample 40 --out samples",
+    "test": "node --test test/*.test.ts",
+    "test:live": "PM_EDGE_LIVE=1 node --test test/live.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
